@@ -1,0 +1,60 @@
+---
+// Root entry point. Without JavaScript it is a plain meta-refresh to the
+// Arabic site (the default language); the inline script upgrades that to a
+// language-aware redirect. Search engines follow the canonical link to /ar/.
+---
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>مركز ألِف التربوي | Aleph Educational Center</title>
+  <meta name="description" content="مركز ألِف التربوي في عربصاليم. Aleph Educational Center, Arabsalim, Lebanon." />
+  <link rel="canonical" href={new URL('/ar/', Astro.site).href} />
+  <link rel="alternate" hreflang="ar" href={new URL('/ar/', Astro.site).href} />
+  <link rel="alternate" hreflang="en" href={new URL('/en/', Astro.site).href} />
+  <link rel="alternate" hreflang="x-default" href={new URL('/ar/', Astro.site).href} />
+  <meta http-equiv="refresh" content="0; url=/ar/" />
+  <link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png" />
+  <style>
+    /* Seen only for the instant before the redirect, so paint the brand
+       ground at once and keep the manual links hidden unless it stalls. */
+    html,body{background:#FDF0E7}
+    body{
+      margin:0;
+      min-height:100vh;
+      display:grid;
+      place-items:center;
+      color:#2D2A9A;
+      font-family:system-ui,-apple-system,'Segoe UI',sans-serif;
+    }
+    .fallback{opacity:0;transition:opacity .2s ease;text-align:center;padding:2rem;margin:0;line-height:2}
+    .fallback.show{opacity:1}
+    .fallback a{color:#2D2A9A}
+    @media (scripting:none){.fallback{opacity:1}}
+  </style>
+  <script is:inline>
+    (() => {
+      try {
+        const stored = localStorage.getItem('aleph:lang');
+        let target = stored === 'en' || stored === 'ar' ? stored : null;
+        if (!target) {
+          const tags = navigator.languages ?? [navigator.language];
+          target = tags.some((l) => String(l).toLowerCase().startsWith('en')) ? 'en' : 'ar';
+        }
+        window.location.replace('/' + target + '/');
+      } catch {
+        window.location.replace('/ar/');
+      }
+    })();
+  </script>
+</head>
+<body>
+  <p class="fallback">
+    <a href="/ar/">المتابعة إلى الموقع</a> &middot; <a href="/en/">Continue to the site</a>
+  </p>
+  <script is:inline>
+    setTimeout(() => document.querySelector('.fallback')?.classList.add('show'), 900);
+  </script>
+</body>
+</html>

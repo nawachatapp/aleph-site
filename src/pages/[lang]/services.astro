@@ -1,0 +1,159 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import ServiceIcon from '../../components/ServiceIcon.astro';
+import Icon from '../../components/Icon.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import { services } from '../../data/services';
+import { whatsappWith } from '../../i18n/contact';
+import { langs, type Lang } from '../../i18n/ui';
+import { useTranslations, localisedPath } from '../../i18n/utils';
+
+export function getStaticPaths() {
+  return langs.map((lang) => ({ params: { lang } }));
+}
+
+const lang = Astro.params.lang as Lang;
+const t = useTranslations(lang);
+
+const copy = {
+  ar: {
+    title: 'الخدمات',
+    description: 'خدمات مركز ألِف التربوي: التربية التقويميّة، علاج النطق واللغة، العلاج الانشغالي، علم النفس التربوي، والتغذية العلاجيّة.',
+    eyebrow: 'ماذا نقدّم',
+    heading: 'خمسُ اختصاصات، وخطّةٌ لكلِّ طفل',
+    lead: 'اختاروا الاختصاصَ الذي يخصُّكم، أو راسلونا ونساعدُكم في الاختيار.',
+    ask: (name: string) => `مرحباً، أودُّ الاستفسارَ عن خدمة: ${name}`,
+    profile: 'الملفّ الكامل',
+  },
+  en: {
+    title: 'Services',
+    description: 'Services at Aleph Educational Center: remedial education, speech and language therapy, occupational therapy, educational psychology and therapeutic nutrition.',
+    eyebrow: 'What we offer',
+    heading: 'Five specialities, one plan per child',
+    lead: 'Pick the speciality that fits, or message us and we’ll help you choose.',
+    ask: (name: string) => `Hello, I'd like to ask about: ${name}`,
+    profile: 'Full profile',
+  },
+}[lang];
+---
+<BaseLayout title={copy.title} description={copy.description}>
+  <PageHeader eyebrow={copy.eyebrow} title={copy.heading} lead={copy.lead}>
+    <nav class="jump" aria-label={copy.title}>
+      {services.map((s) => <a href={`#${s.id}`}>{s.name[lang]}</a>)}
+    </nav>
+  </PageHeader>
+
+  {services.map((s, i) => (
+    <section class:list={['section', 'svc', i % 2 === 1 && 'section--alt']} id={s.id}>
+      <div class="wrap svc__grid">
+        <div class="svc__head">
+          <ServiceIcon id={s.id} size="lg" />
+          <h2>{s.name[lang]}</h2>
+          <p class="lead">{s.summary[lang]}</p>
+          <a class="btn" href={whatsappWith(copy.ask(s.name[lang]))} target="_blank" rel="noopener">
+            <Icon name="whatsapp" /> {t('service.ask')}
+          </a>
+        </div>
+
+        <div class="svc__body">
+          <div class="panel">
+            <h3>{t('service.forWhom')}</h3>
+            <ul class="ticks">
+              {s.signs[lang].map((x) => <li>{x}</li>)}
+            </ul>
+          </div>
+
+          <a class="who" href={`${localisedPath('team', lang)}#${s.id}`}>
+            <span class="who__label">{t('service.specialist')}</span>
+            <span class="who__name">{s.specialist.name[lang]}</span>
+            <span class="latin-caps">{s.specialist.latin}</span>
+            <span class="who__role">{s.specialist.role[lang]}</span>
+            <span class="who__more">{copy.profile} <Icon name="arrow" /></span>
+          </a>
+        </div>
+      </div>
+    </section>
+  ))}
+
+  <CtaBand />
+</BaseLayout>
+
+<style>
+  .jump{display:flex;flex-wrap:wrap;gap:8px;margin-top:var(--sp-4)}
+  .jump a{
+    padding:7px 16px;
+    border-radius:var(--r-pill);
+    background:var(--surface);
+    border:1px solid var(--line);
+    color:var(--indigo);
+    font-size:var(--step--1);
+    font-weight:500;
+    text-decoration:none;
+  }
+  .jump a:hover{border-color:var(--teal)}
+
+  .svc__grid{
+    display:grid;
+    grid-template-columns:1fr 1.15fr;
+    gap:clamp(28px,5vw,72px);
+    align-items:start;
+  }
+  .svc__head h2{margin-block:var(--sp-4) var(--sp-3)}
+  .svc__head .lead{margin-bottom:var(--sp-4)}
+
+  .svc__body{display:grid;gap:var(--sp-4)}
+  .panel{
+    padding:var(--sp-4) var(--sp-5);
+    border-radius:var(--r-lg);
+    background:var(--surface);
+    border:1px solid var(--line);
+  }
+  .panel h3{margin-bottom:var(--sp-3)}
+
+  /* List items marked with the teal dot of the chips. */
+  .ticks{list-style:none;padding:0;margin:0}
+  .ticks li{
+    position:relative;
+    padding-inline-start:26px;
+    margin-bottom:10px;
+  }
+  .ticks li::before{
+    content:"";
+    position:absolute;
+    inset-inline-start:2px;
+    top:.65em;
+    inline-size:10px;
+    block-size:10px;
+    border-radius:3px;
+    background:var(--teal);
+  }
+
+  .who{
+    display:grid;
+    gap:4px;
+    padding:var(--sp-4) var(--sp-5);
+    border-radius:var(--r-lg);
+    border:2px solid var(--amber);
+    text-decoration:none;
+    color:var(--ink);
+    transition:background var(--dur) var(--ease);
+  }
+  .who:hover{background:var(--surface)}
+  .who__label{font-size:var(--step--1);color:var(--amber-ink);font-weight:500}
+  .who__name{font-size:var(--step-2);font-weight:600;color:var(--indigo);line-height:1.4}
+  .who__role{color:var(--ink-soft)}
+  .who__more{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    margin-top:var(--sp-2);
+    color:var(--indigo);
+    font-weight:500;
+  }
+  .who__more :global(svg){inline-size:18px;block-size:18px}
+
+  @media (max-width:860px){
+    .svc__grid{grid-template-columns:1fr}
+  }
+</style>

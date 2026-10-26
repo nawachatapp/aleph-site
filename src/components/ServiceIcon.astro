@@ -1,0 +1,78 @@
+---
+// Each speciality's emblem, redrawn from the centre's own profile cards:
+// two teals inside a rounded amber frame.
+import type { ServiceId } from '../data/services';
+
+interface Props {
+  id: ServiceId;
+  size?: 'sm' | 'md' | 'lg';
+}
+const { id, size = 'md' } = Astro.props;
+---
+<span class:list={['emblem', `emblem--${size}`]} aria-hidden="true">
+  <svg viewBox="0 0 64 64">
+    {id === 'speech' && (
+      <g>
+        <ellipse cx="41" cy="39" rx="15" ry="12.5" fill="var(--teal-light)"/>
+        <path d="M49 47l6 8-12-4z" fill="var(--teal-light)"/>
+        <ellipse cx="27" cy="27" rx="20" ry="16" fill="var(--teal)"/>
+        <path d="M14 38l-5 11 13-6z" fill="var(--teal)"/>
+        <circle cx="19" cy="27" r="2.8" fill="var(--teal-pale)"/>
+        <circle cx="27" cy="27" r="2.8" fill="var(--teal-pale)"/>
+        <circle cx="35" cy="27" r="2.8" fill="var(--teal-pale)"/>
+      </g>
+    )}
+    {id === 'ot' && (
+      <g>
+        <path d="M6 22l12-3-2 6z" fill="var(--teal)"/>
+        <path d="M16 19l10-3-3 13z" fill="var(--teal-light)"/>
+        <path d="M26 16l30 7-17 12-16-6z" fill="var(--teal)"/>
+        <path d="M30 18l13-13-1 18z" fill="var(--teal-light)"/>
+        <path d="M39 35l17-12-12 33z" fill="var(--teal-ink)" opacity=".75"/>
+        <path d="M39 35l5 21-9-9z" fill="var(--teal-light)"/>
+      </g>
+    )}
+    {id === 'psych' && (
+      <g>
+        <path d="M32 9c6 5 6 15 0 20-6-5-6-15 0-20z" fill="var(--teal)"/>
+        <path d="M31 31c-3-8-12-11-21-8 3 8 12 11 21 8z" fill="var(--teal)"/>
+        <path d="M33 31c3-8 12-11 21-8-3 8-12 11-21 8z" fill="var(--teal)"/>
+        <rect x="29.5" y="27" width="5" height="30" rx="2.5" fill="var(--teal)"/>
+        <rect x="21" y="45" width="10" height="4" rx="1.5" fill="var(--teal)"/>
+        <rect x="23" y="51.5" width="8" height="4" rx="1.5" fill="var(--teal)"/>
+      </g>
+    )}
+    {id === 'remedial' && (
+      <g>
+        <path d="M14 15a6 6 0 0 1 6-6h8a4 4 0 0 1 4 4v8h-4.5a6 6 0 0 0-6 6v7a6 6 0 0 0 6 6H32v6H20a6 6 0 0 1-6-6z" fill="var(--teal)"/>
+        <path d="M34 22c9.4 0 16 7 16 16v15a3 3 0 0 1-3 3H38a4 4 0 0 1-4-4z" fill="var(--teal-light)"/>
+      </g>
+    )}
+    {id === 'nutrition' && (
+      <g>
+        <rect x="8" y="10" width="32" height="40" rx="3" fill="var(--teal)"/>
+        <rect x="14" y="18" width="18" height="2.6" rx="1.3" fill="var(--teal-pale)"/>
+        <rect x="14" y="25" width="18" height="2.6" rx="1.3" fill="var(--teal-pale)"/>
+        <rect x="14" y="32" width="14" height="2.6" rx="1.3" fill="var(--teal-pale)"/>
+        <rect x="14" y="39" width="10" height="2.6" rx="1.3" fill="var(--teal-pale)"/>
+        <path d="M44 31c4-3 12-2 12 8s-6 16-9 16c-1.6 0-2-1-3-1s-1.4 1-3 1c-3 0-9-6-9-16s8-11 12-8z" fill="var(--teal-light)"/>
+        <path d="M44 31c0-4 2-7 6-8-.5 4-3 7-6 8z" fill="var(--teal)"/>
+      </g>
+    )}
+  </svg>
+</span>
+
+<style>
+  .emblem{
+    display:inline-grid;
+    place-items:center;
+    flex:none;
+    border:2.5px solid var(--amber);
+    border-radius:var(--r);
+    background:var(--surface);
+  }
+  .emblem svg{inline-size:70%;block-size:70%}
+  .emblem--sm{inline-size:52px;block-size:52px;border-radius:14px;border-width:2px}
+  .emblem--md{inline-size:76px;block-size:76px}
+  .emblem--lg{inline-size:112px;block-size:112px;border-radius:24px;border-width:3px}
+</style>

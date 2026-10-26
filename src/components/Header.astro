@@ -1,0 +1,274 @@
+---
+import PortalLink from './PortalLink.astro';
+import { getLangFromUrl, useTranslations, localisedPath, alternatePath } from '../i18n/utils';
+import { navItems } from '../i18n/ui';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+const alt = alternatePath(Astro.url, lang);
+
+// Trailing-slash-insensitive; a news article keeps "News" lit.
+const here = Astro.url.pathname.replace(/\/+$/, '') || '/';
+const isCurrent = (path: string) => {
+  const target = localisedPath(path, lang).replace(/\/+$/, '');
+  return path === '' ? target === here : here === target || here.startsWith(target + '/');
+};
+---
+
+<header class="site-header">
+  <div class="wrap bar">
+    <a class="brand" href={localisedPath('', lang)}>
+      <picture>
+        <source srcset="/brand/mark-176.webp" type="image/webp" />
+        <img class="brand__mark" src="/brand/mark-176.png" alt="" width="29" height="56" fetchpriority="high" />
+      </picture>
+      <span class="brand__text">
+        <span class="brand__name">{t('site.name')}</span>
+        <span class="brand__kind">{t('site.kind')}</span>
+      </span>
+    </a>
+
+    <button class="burger" type="button" aria-expanded="false" aria-controls="site-nav">
+      <span class="burger__box" aria-hidden="true"><i></i><i></i><i></i></span>
+      <span class="visually-hidden">{t('nav.menu')}</span>
+    </button>
+
+    <nav id="site-nav" class="nav" aria-label={t('nav.menu')}>
+      <ul class="nav__list">
+        {navItems.map((item) => (
+          <li>
+            <a href={localisedPath(item.path, lang)} aria-current={isCurrent(item.path) ? 'page' : undefined}>
+              {t(item.key)}
+            </a>
+          </li>
+        ))}
+      </ul>
+
+      {/* Two round actions: the online portal and the language switch.
+          Their labels live in aria-label and in the CSS tooltip (data-tip). */}
+      <div class="tools">
+        <PortalLink variant="tool" class="tool" />
+        <a class="tool" href={alt.path} lang={alt.lang} hreflang={alt.lang} aria-label={t('lang.label')} data-tip={t('lang.switch')}>
+          <span class="tool__glyph" aria-hidden="true">{t('lang.glyph')}</span>
+        </a>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .site-header{
+    position:sticky;
+    top:0;
+    z-index:50;
+    background:rgba(253,240,231,.86);
+    -webkit-backdrop-filter:blur(14px) saturate(150%);
+    backdrop-filter:blur(14px) saturate(150%);
+    border-bottom:1px solid var(--line);
+  }
+
+  .bar{
+    display:flex;
+    align-items:center;
+    gap:var(--sp-4);
+    min-height:var(--header-h);
+  }
+
+  /* ---- Brand ---- */
+  .brand{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    text-decoration:none;
+    flex:none;
+    min-width:0;
+  }
+  .brand picture{display:flex;flex:none}
+  .brand__mark{inline-size:auto;block-size:clamp(44px,6vw,56px)}
+  .brand__text{display:flex;flex-direction:column;min-width:0;line-height:1.35}
+  .brand__name{
+    font-size:clamp(16px,2vw,19px);
+    font-weight:600;
+    color:var(--indigo);
+    white-space:nowrap;
+  }
+  .brand__kind{
+    font-size:12px;
+    color:var(--teal-ink);
+    white-space:nowrap;
+  }
+  :root[lang="en"] .brand__kind{
+    font-size:10px;
+    letter-spacing:.16em;
+    text-transform:uppercase;
+    font-variation-settings:'HEXP' 100;
+  }
+
+  /* ---- Nav ---- */
+  .nav{
+    margin-inline-start:auto;
+    display:flex;
+    align-items:center;
+    gap:var(--sp-4);
+  }
+  .nav__list{
+    display:flex;
+    align-items:center;
+    gap:clamp(4px,1vw,10px);
+    list-style:none;
+    margin:0;
+    padding:0;
+  }
+  .nav__list li{margin:0}
+  .nav__list a{
+    display:block;
+    padding:7px 14px;
+    border-radius:var(--r-pill);
+    color:var(--ink);
+    text-decoration:none;
+    font-size:15px;
+    font-weight:400;
+    white-space:nowrap;
+    transition:background var(--dur) var(--ease),color var(--dur) var(--ease);
+  }
+  .nav__list a:hover{background:var(--peach-deep);color:var(--indigo)}
+  .nav__list a[aria-current="page"]{background:var(--indigo);color:var(--ink-invert);font-weight:500}
+
+  /* ---- Round tools ---- */
+  .tools{flex:none;display:flex;align-items:center;gap:var(--sp-2)}
+  .tool,
+  .tools :global(.tool){
+    position:relative;
+    display:grid;
+    place-items:center;
+    inline-size:42px;
+    block-size:42px;
+    padding:0;
+    border-radius:50%;
+    border:2px solid var(--line);
+    background:var(--surface);
+    color:var(--teal-ink);
+    text-decoration:none;
+    transition:border-color var(--dur) var(--ease),background var(--dur) var(--ease);
+  }
+  .tools :global(.tool.is-soon){border-style:dashed;cursor:default}
+  .tools :global(.tool:hover){border-color:var(--teal)}
+  .tool__glyph{font-size:12px;font-weight:600;letter-spacing:.06em;line-height:1}
+  :root[lang="en"] .tool__glyph{font-size:18px;letter-spacing:0;line-height:1}
+
+  /* Tooltip, from data-tip. Screen readers get the same text via aria-label. */
+  .tools :global(.tool)::after{
+    content:attr(data-tip);
+    position:absolute;
+    top:calc(100% + 8px);
+    inset-inline-end:0;
+    padding:5px 12px;
+    border-radius:var(--r-pill);
+    background:var(--indigo-night);
+    color:var(--ink-invert);
+    font-size:12px;
+    font-weight:400;
+    line-height:1.4;
+    white-space:nowrap;
+    opacity:0;
+    visibility:hidden;
+    transform:translateY(-3px);
+    transition:opacity var(--dur) var(--ease),transform var(--dur) var(--ease),visibility var(--dur);
+    pointer-events:none;
+  }
+  .tools :global(.tool:hover)::after,
+  .tools :global(.tool:focus-visible)::after{opacity:1;visibility:visible;transform:none}
+
+  /* ---- Burger ---- */
+  .burger{
+    display:none;
+    margin-inline-start:auto;
+    background:var(--surface);
+    border:2px solid var(--line);
+    border-radius:14px;
+    padding:10px 11px;
+    cursor:pointer;
+  }
+  .burger__box{display:block;inline-size:20px}
+  .burger__box i{
+    display:block;
+    block-size:2px;
+    background:var(--indigo);
+    border-radius:1px;
+    transition:transform var(--dur) var(--ease),opacity var(--dur) var(--ease);
+  }
+  .burger__box i + i{margin-top:4px}
+  .burger[aria-expanded="true"] i:nth-child(1){transform:translateY(6px) rotate(45deg)}
+  .burger[aria-expanded="true"] i:nth-child(2){opacity:0}
+  .burger[aria-expanded="true"] i:nth-child(3){transform:translateY(-6px) rotate(-45deg)}
+
+  /* ---- Mobile ---- */
+  @media (max-width:960px){
+    .burger{display:block}
+    .nav{
+      position:absolute;
+      inset-inline:0;
+      top:100%;
+      flex-direction:column;
+      align-items:stretch;
+      gap:var(--sp-3);
+      margin:0;
+      padding:var(--sp-3) clamp(16px,4vw,40px) var(--sp-4);
+      background:var(--peach);
+      border-bottom:1px solid var(--line);
+      box-shadow:var(--shadow);
+      display:none;
+    }
+    .nav.is-open{display:flex}
+    .nav__list{flex-direction:column;align-items:stretch;gap:2px}
+    .nav__list a{padding:11px 16px;font-size:16px}
+
+    /* No hover on touch: the buttons become labelled rows instead. */
+    .tools{justify-content:stretch}
+    .tool,
+    .tools :global(.tool){
+      flex:1;
+      inline-size:auto;
+      grid-auto-flow:column;
+      gap:8px;
+      border-radius:var(--r-pill);
+      block-size:48px;
+      font-size:14px;
+      font-weight:500;
+    }
+    .tools :global(.tool)::after{
+      position:static;
+      padding:0;
+      background:none;
+      color:inherit;
+      opacity:1;
+      visibility:visible;
+      transform:none;
+      font-size:14px;
+      font-weight:500;
+    }
+  }
+  @media (max-width:400px){
+    .brand__kind{display:none}
+  }
+</style>
+
+<script>
+  // ClientRouter swaps documents without re-running module scripts, so the
+  // wiring happens on astro:page-load (first load and every navigation).
+  function setupHeader() {
+    const burger = document.querySelector<HTMLButtonElement>('.burger');
+    const nav = document.getElementById('site-nav');
+    if (!burger || !nav) return;
+
+    const set = (open: boolean) => {
+      burger.setAttribute('aria-expanded', String(open));
+      nav.classList.toggle('is-open', open);
+    };
+    burger.addEventListener('click', () => set(burger.getAttribute('aria-expanded') !== 'true'));
+    nav.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') { set(false); burger.focus(); }
+    });
+  }
+  document.addEventListener('astro:page-load', setupHeader);
+</script>

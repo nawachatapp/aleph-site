@@ -1,0 +1,72 @@
+---
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { getLangFromUrl, useTranslations, alternatePath } from '../i18n/utils';
+import { ClientRouter } from 'astro:transitions';
+import { dir } from '../i18n/ui';
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description: string;
+}
+
+const { title, description } = Astro.props;
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+const alt = alternatePath(Astro.url, lang);
+
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const altHref = new URL(alt.path, Astro.site);
+const ogImage = new URL('/og.png', Astro.site);
+const fullTitle = title === t('site.name') ? title : `${title} | ${t('site.name')}`;
+---
+<!doctype html>
+<html lang={lang} dir={dir[lang]}>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{fullTitle}</title>
+  <meta name="description" content={description} />
+  <meta name="theme-color" content="#FDF0E7" />
+
+  <link rel="canonical" href={canonical.href} />
+  <link rel="alternate" hreflang={lang} href={canonical.href} />
+  <link rel="alternate" hreflang={alt.lang} href={altHref.href} />
+
+  <link rel="preload" as="image" href="/brand/mark-176.webp" type="image/webp" />
+  <link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png" />
+  <link rel="icon" href="/favicon-16.png" sizes="16x16" type="image/png" />
+  <link rel="icon" href="/favicon.png" sizes="64x64" type="image/png" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content={t('site.name')} />
+  <meta property="og:title" content={fullTitle} />
+  <meta property="og:description" content={description} />
+  <meta property="og:url" content={canonical.href} />
+  <meta property="og:image" content={ogImage.href} />
+  <meta property="og:locale" content={lang === 'ar' ? 'ar_LB' : 'en_US'} />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <ClientRouter />
+</head>
+
+<body>
+  <a class="skip-link" href="#main">{t('nav.skip')}</a>
+  <Header />
+  <main id="main" tabindex="-1">
+    <slot />
+  </main>
+  <Footer />
+
+  <script>
+    // Remember the language the reader is actually reading, so the root
+    // redirect (src/pages/index.astro) sends them back to it next time.
+    try {
+      const lang = document.documentElement.lang;
+      if (lang === 'ar' || lang === 'en') localStorage.setItem('aleph:lang', lang);
+    } catch { /* storage blocked - the preference simply won't persist */ }
+  </script>
+</body>
+</html>

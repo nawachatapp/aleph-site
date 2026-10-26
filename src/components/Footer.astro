@@ -1,0 +1,107 @@
+---
+import Icon from './Icon.astro';
+import PortalLink from './PortalLink.astro';
+import { getLangFromUrl, useTranslations, localisedPath } from '../i18n/utils';
+import { navItems } from '../i18n/ui';
+import { phone, whatsapp, instagram, address, mapUrl } from '../i18n/contact';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+  <div class="wrap grid">
+    <div class="brandcol">
+      <picture>
+        <source srcset="/brand/logo-full-400.webp" type="image/webp" />
+        <img src="/brand/logo-full-400.png" alt={t('site.name')} width="190" height="400" loading="lazy" class="logo" />
+      </picture>
+      <p class="motto">{lang === 'ar' ? `«${t('site.motto')}»` : `“${t('site.motto')}”`}</p>
+    </div>
+
+    <div>
+      <h2 class="foot-h">{t('footer.pages')}</h2>
+      <ul class="links">
+        {navItems.map((item) => (
+          <li><a href={localisedPath(item.path, lang)}>{t(item.key)}</a></li>
+        ))}
+      </ul>
+    </div>
+
+    <div>
+      <h2 class="foot-h">{t('footer.contact')}</h2>
+      <ul class="links links--contact">
+        <li><a href={whatsapp} target="_blank" rel="noopener"><Icon name="whatsapp" /> <span dir="ltr">{phone.intl}</span></a></li>
+        <li><a href={`tel:${phone.tel}`}><Icon name="phone" /> <span dir="ltr">{phone.label}</span></a></li>
+        <li><a href={mapUrl} target="_blank" rel="noopener"><Icon name="pin" /> {address[lang]}</a></li>
+        <li><a href={instagram.url} target="_blank" rel="noopener"><Icon name="instagram" /> <span dir="ltr">@{instagram.handle}</span></a></li>
+      </ul>
+      <PortalLink variant="pill" />
+    </div>
+  </div>
+
+  <div class="wrap base">
+    <p>© {year} {t('site.name')}. {t('footer.rights')}.</p>
+  </div>
+</footer>
+
+<style>
+  .site-footer{
+    margin-top:auto;
+    background:var(--surface);
+    border-top:1px solid var(--line);
+    padding-top:var(--sp-6);
+  }
+  .grid{
+    display:grid;
+    grid-template-columns:1.2fr 1fr 1.4fr;
+    gap:var(--sp-5);
+    padding-bottom:var(--sp-5);
+  }
+  .brandcol{display:flex;align-items:flex-end;gap:var(--sp-4)}
+  /* flex:none - otherwise a long motto (English) squeezes the picture, and
+     with img{max-width:100%} the logo is squashed sideways. */
+  .brandcol picture{display:flex;flex:none}
+  .logo{inline-size:auto;block-size:170px;max-width:none}
+  .motto{
+    font-size:var(--step-1);
+    font-weight:500;
+    color:var(--teal-ink);
+    margin:0;
+    line-height:1.6;
+  }
+  .foot-h{
+    font-size:var(--step-0);
+    font-weight:600;
+    color:var(--indigo);
+    margin-bottom:var(--sp-3);
+  }
+  .links{list-style:none;margin:0 0 var(--sp-4);padding:0}
+  .links li{margin-bottom:6px}
+  .links a{
+    display:inline-flex;
+    align-items:center;
+    gap:10px;
+    color:var(--ink);
+    text-decoration:none;
+  }
+  .links a:hover{color:var(--indigo);text-decoration:underline}
+  .links :global(svg){inline-size:18px;block-size:18px;color:var(--teal-ink);flex:none}
+
+  .base{
+    border-top:1px solid var(--line);
+    padding-block:var(--sp-4);
+    font-size:var(--step--1);
+    color:var(--ink-soft);
+  }
+
+  @media (max-width:860px){
+    .grid{grid-template-columns:1fr 1fr}
+    .brandcol{grid-column:1 / -1}
+  }
+  @media (max-width:520px){
+    .grid{grid-template-columns:1fr}
+    .logo{block-size:130px}
+  }
+</style>

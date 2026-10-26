@@ -1,0 +1,257 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import Icon from '../../components/Icon.astro';
+import PortalLink from '../../components/PortalLink.astro';
+import { services } from '../../data/services';
+import { phone, whatsapp, instagram, address, mapUrl, mapEmbed } from '../../i18n/contact';
+import { langs, type Lang } from '../../i18n/ui';
+import { useTranslations } from '../../i18n/utils';
+
+export function getStaticPaths() {
+  return langs.map((lang) => ({ params: { lang } }));
+}
+
+const lang = Astro.params.lang as Lang;
+const t = useTranslations(lang);
+
+const copy = {
+  ar: {
+    title: 'تواصل معنا',
+    description: 'تواصلوا مع مركز ألِف التربوي في عربصاليم عبر واتساب أو الهاتف.',
+    eyebrow: 'نحن هنا',
+    heading: 'تواصلوا معنا',
+    lead: 'أسرعُ طريقةٍ للوصولِ إلينا هي واتساب. نردُّ على الرسائلِ ونحدّدُ معكم موعداً.',
+    whatsapp: 'واتساب',
+    call: 'هاتف',
+    visit: 'العنوان',
+    follow: 'إنستغرام',
+    portal: 'المنصّة الإلكترونية',
+    formTitle: 'اكتبوا رسالتَكم',
+    formLead: 'املأوا الحقول، وتُفتحُ الرسالةُ جاهزةً في واتساب لترسلوها. لا نحفظُ أيَّ معلوماتٍ على الموقع.',
+    name: 'اسمُ وليِّ الأمر',
+    age: 'عمرُ الطفل',
+    service: 'الخدمة',
+    notSure: 'لستُ متأكّداً بعد',
+    message: 'ما الذي يقلقُكم؟ (اختياري)',
+    send: 'افتحوا الرسالة في واتساب',
+    msgHello: 'مرحباً، أنا',
+    msgAge: 'عمرُ طفلي',
+    msgService: 'الخدمة',
+    mapTitle: 'خريطة موقع مركز ألِف في عربصاليم',
+  },
+  en: {
+    title: 'Contact',
+    description: 'Contact Aleph Educational Center in Arabsalim by WhatsApp or phone.',
+    eyebrow: 'We’re here',
+    heading: 'Get in touch',
+    lead: 'WhatsApp is the quickest way to reach us. We reply to messages and book a time with you.',
+    whatsapp: 'WhatsApp',
+    call: 'Phone',
+    visit: 'Address',
+    follow: 'Instagram',
+    portal: 'Online portal',
+    formTitle: 'Write to us',
+    formLead: 'Fill in the fields and your message opens in WhatsApp, ready to send. Nothing is stored on this site.',
+    name: 'Parent’s name',
+    age: 'Child’s age',
+    service: 'Service',
+    notSure: 'Not sure yet',
+    message: 'What worries you? (optional)',
+    send: 'Open message in WhatsApp',
+    msgHello: 'Hello, my name is',
+    msgAge: 'My child’s age',
+    msgService: 'Service',
+    mapTitle: 'Map showing Aleph Educational Center in Arabsalim',
+  },
+}[lang];
+---
+<BaseLayout title={copy.title} description={copy.description}>
+  <PageHeader eyebrow={copy.eyebrow} title={copy.heading} lead={copy.lead} />
+
+  <section class="section">
+    <div class="wrap contact">
+      <ul class="ways">
+        <li>
+          <a class="way way--main" href={whatsapp} target="_blank" rel="noopener">
+            <Icon name="whatsapp" />
+            <span class="way__label">{copy.whatsapp}</span>
+            <span class="way__value" dir="ltr">{phone.intl}</span>
+          </a>
+        </li>
+        <li>
+          <a class="way" href={`tel:${phone.tel}`}>
+            <Icon name="phone" />
+            <span class="way__label">{copy.call}</span>
+            <span class="way__value" dir="ltr">{phone.label}</span>
+          </a>
+        </li>
+        <li>
+          <a class="way" href={mapUrl} target="_blank" rel="noopener">
+            <Icon name="pin" />
+            <span class="way__label">{copy.visit}</span>
+            <span class="way__value">{address[lang]}</span>
+          </a>
+        </li>
+        <li>
+          <a class="way" href={instagram.url} target="_blank" rel="noopener">
+            <Icon name="instagram" />
+            <span class="way__label">{copy.follow}</span>
+            <span class="way__value" dir="ltr">@{instagram.handle}</span>
+          </a>
+        </li>
+        <li class="ways__portal">
+          <PortalLink variant="pill" />
+          <span>{t('cta.portalDesc')}</span>
+        </li>
+      </ul>
+
+      <form class="form" data-wa={whatsapp}
+        data-hello={copy.msgHello} data-age={copy.msgAge} data-service={copy.msgService}>
+        <h2>{copy.formTitle}</h2>
+        <p class="form__lead">{copy.formLead}</p>
+
+        <div class="form__row">
+          <label>
+            <span>{copy.name}</span>
+            <input name="name" required autocomplete="name" />
+          </label>
+          <label>
+            <span>{copy.age}</span>
+            <input name="age" inputmode="numeric" />
+          </label>
+        </div>
+        <label>
+          <span>{copy.service}</span>
+          <select name="service">
+            <option value="">{copy.notSure}</option>
+            {services.map((s) => <option value={s.name[lang]}>{s.name[lang]}</option>)}
+          </select>
+        </label>
+        <label>
+          <span>{copy.message}</span>
+          <textarea name="message" rows="4"></textarea>
+        </label>
+        <button class="btn" type="submit"><Icon name="whatsapp" /> {copy.send}</button>
+      </form>
+    </div>
+  </section>
+
+  <section class="map">
+    <iframe title={copy.mapTitle} src={mapEmbed} loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+  </section>
+</BaseLayout>
+
+<style>
+  .contact{
+    display:grid;
+    grid-template-columns:1fr 1.15fr;
+    gap:clamp(28px,5vw,64px);
+    align-items:start;
+  }
+
+  .ways{list-style:none;margin:0;padding:0;display:grid;gap:var(--sp-3)}
+  .ways li{margin:0;max-width:none}
+  .way{
+    display:grid;
+    grid-template-columns:auto 1fr;
+    grid-template-rows:auto auto;
+    column-gap:var(--sp-3);
+    align-items:center;
+    padding:var(--sp-3) var(--sp-4);
+    border-radius:var(--r);
+    background:var(--surface);
+    border:1px solid var(--line);
+    color:var(--ink);
+    text-decoration:none;
+    transition:border-color var(--dur) var(--ease);
+  }
+  .way:hover{border-color:var(--teal)}
+  .way :global(svg){
+    grid-row:1 / 3;
+    inline-size:26px;
+    block-size:26px;
+    color:var(--teal-ink);
+  }
+  .way__label{font-size:var(--step--1);color:var(--ink-soft)}
+  .way__value{font-weight:500;color:var(--indigo);text-align:start}
+  .way--main{background:var(--indigo);border-color:var(--indigo)}
+  .way--main :global(svg){color:var(--amber)}
+  .way--main .way__label{color:rgba(255,247,241,.75)}
+  .way--main .way__value{color:var(--ink-invert);font-size:var(--step-1)}
+  .way--main:hover{border-color:var(--amber)}
+
+  .ways__portal{
+    display:flex;
+    flex-wrap:wrap;
+    align-items:center;
+    gap:var(--sp-3);
+    padding-top:var(--sp-3);
+    color:var(--ink-soft);
+    font-size:var(--step--1);
+  }
+
+  .form{
+    display:grid;
+    gap:var(--sp-3);
+    padding:var(--sp-5);
+    border-radius:var(--r-lg);
+    background:var(--surface);
+    border:2px solid var(--amber);
+  }
+  .form h2{font-size:var(--step-2)}
+  .form__lead{color:var(--ink-soft);font-size:var(--step--1)}
+  .form__row{display:grid;grid-template-columns:1.6fr 1fr;gap:var(--sp-3)}
+  .form label{display:grid;gap:6px}
+  .form label > span{font-size:var(--step--1);font-weight:500;color:var(--ink)}
+  .form :is(input,select,textarea){
+    inline-size:100%;
+    padding:11px 14px;
+    border-radius:12px;
+    border:1.5px solid var(--line);
+    background:var(--peach);
+    color:var(--ink);
+    font:inherit;
+    font-size:16px;
+  }
+  .form :is(input,select,textarea):focus{outline:none;border-color:var(--teal);background:var(--surface)}
+  .form textarea{resize:vertical}
+  .form .btn{justify-self:start;margin-top:var(--sp-2)}
+
+  .map{line-height:0}
+  .map iframe{
+    inline-size:100%;
+    block-size:380px;
+    border:0;
+    filter:saturate(.85);
+  }
+
+  @media (max-width:860px){
+    .contact{grid-template-columns:1fr}
+  }
+  @media (max-width:480px){
+    .form{padding:var(--sp-4)}
+    .form__row{grid-template-columns:1fr}
+  }
+</style>
+
+<script>
+  // The form never posts anywhere: it composes a WhatsApp message from the
+  // fields and opens it, so the site needs no server and stores nothing.
+  function setupForm() {
+    const form = document.querySelector<HTMLFormElement>('form.form');
+    if (!form) return;
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const d = form.dataset;
+      const f = new FormData(form);
+      const get = (k: string) => String(f.get(k) ?? '').trim();
+      const lines = [`${d.hello} ${get('name')}.`];
+      if (get('age')) lines.push(`${d.age}: ${get('age')}`);
+      if (get('service')) lines.push(`${d.service}: ${get('service')}`);
+      if (get('message')) lines.push('', get('message'));
+      window.open(`${d.wa}?text=${encodeURIComponent(lines.join('\n'))}`, '_blank', 'noopener');
+    });
+  }
+  document.addEventListener('astro:page-load', setupForm);
+</script>

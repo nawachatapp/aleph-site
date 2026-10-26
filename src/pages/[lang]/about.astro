@@ -1,0 +1,169 @@
+---
+import { Image } from 'astro:assets';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import Section from '../../components/Section.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import photoA from '../../assets/photos/shapes-wide.jpg';
+import photoB from '../../assets/photos/two-boys-table.jpg';
+import { langs, type Lang } from '../../i18n/ui';
+
+export function getStaticPaths() {
+  return langs.map((lang) => ({ params: { lang } }));
+}
+
+const lang = Astro.params.lang as Lang;
+
+// DRAFT COPY - written for the centre to review and correct.
+const copy = {
+  ar: {
+    title: 'من نحن',
+    description: 'تعرّفوا إلى مركز ألِف التربوي في عربصاليم: قصّة الاسم، وطريقتنا في العمل مع الأطفال وأهلهم.',
+    eyebrow: 'مركز ألِف التربوي',
+    heading: 'من نحن',
+    lead: 'مركزٌ تربويٌّ وعلاجيٌّ متخصّص في عربصاليم، يجمعُ تحتَ سقفٍ واحدٍ ما يحتاجُه الطفلُ ليتعلّمَ ويتواصلَ وينمو بثقة.',
+    storyTitle: 'لماذا «ألِف»؟',
+    story: [
+      'الألِفُ أوّلُ الحروف، ومنها تبدأُ الكلمات. اخترنا الاسمَ لأنّ كلَّ طفلٍ يستحقُّ بدايةً صحيحة: تقييماً دقيقاً، وخطّةً على قياسِه، وأشخاصاً يؤمنونَ بقدرتِه.',
+      'شعارُنا مأخوذٌ من قولِ الإمامِ عليّ (ع): «والعلمُ يزكو على الإنفاق». المعرفةُ تكبرُ كلّما شاركناها، ولذلك نشاركُ الأهلَ في كلِّ خطوة، ونعطيهم ما يحتاجونَه ليتابعوا في البيت.',
+    ],
+    quote: 'والعلمُ يزكو على الإنفاق',
+    approachEyebrow: 'طريقتُنا',
+    approachTitle: 'ما نحرصُ عليه',
+    approach: [
+      { title: 'التقييمُ قبلَ العلاج', body: 'لا نبدأُ قبلَ أن نفهم. كلُّ مسارٍ يبدأُ بتقييمٍ يحدّدُ نقاطَ القوّةِ والحاجاتِ بدقّة.' },
+      { title: 'خطّةٌ لكلِّ طفل', body: 'لا برامجَ جاهزة. نضعُ أهدافاً واضحةً تناسبُ عمرَ الطفلِ ومدرستَه وحياتَه اليوميّة.' },
+      { title: 'فريقٌ واحد', body: 'حينَ يحتاجُ الطفلُ إلى أكثرَ من اختصاص، تتشاركُ الاختصاصيّاتُ الملاحظاتِ ويعملنَ على خطّةٍ واحدة.' },
+      { title: 'الأهلُ شركاء', body: 'نشرحُ لكم ما نفعلُه ولماذا، ونطلعُكم على التقدّم، ونقترحُ ما يمكنُ متابعتُه في البيت.' },
+    ],
+    spaceTitle: 'المكان',
+    altA: 'طفلٌ يمرّرُ عوداً خشبيّاً على أشكالٍ هندسيّة محفورة',
+    altB: 'طفلان يلعبان لعبةً تعليميّة على طاولةٍ صفراء',
+  },
+  en: {
+    title: 'About',
+    description: 'About Aleph Educational Center in Arabsalim: the story behind the name, and how we work with children and their families.',
+    eyebrow: 'Aleph Educational Center',
+    heading: 'About us',
+    lead: 'A specialised education and therapy centre in Arabsalim, bringing together under one roof what a child needs to learn, communicate and grow with confidence.',
+    storyTitle: 'Why “Aleph”?',
+    story: [
+      'Aleph (ألِف) is the first letter of the Arabic alphabet, where every word begins. We chose the name because every child deserves the right start: a careful assessment, a plan made to measure, and people who believe in what they can do.',
+      'Our motto comes from a saying of Imam Ali: “Knowledge grows as it is given.” Knowledge multiplies when it is shared, so we share every step with parents and give them what they need to carry on at home.',
+    ],
+    quote: 'Knowledge grows as it is given',
+    approachEyebrow: 'Our approach',
+    approachTitle: 'What we hold to',
+    approach: [
+      { title: 'Assess before we treat', body: 'We don’t start until we understand. Every path begins with an assessment that pins down strengths and needs.' },
+      { title: 'A plan for every child', body: 'No off-the-shelf programmes. We set clear goals that fit the child’s age, school and daily life.' },
+      { title: 'One team', body: 'When a child needs more than one speciality, the specialists share notes and work to a single plan.' },
+      { title: 'Parents as partners', body: 'We explain what we do and why, keep you updated on progress, and suggest what to continue at home.' },
+    ],
+    spaceTitle: 'The space',
+    altA: 'A child tracing a wooden stick around geometric shapes cut into a board',
+    altB: 'Two children playing a learning game at a yellow table',
+  },
+}[lang];
+---
+<BaseLayout title={copy.title} description={copy.description}>
+  <PageHeader eyebrow={copy.eyebrow} title={copy.heading} lead={copy.lead} />
+
+  <section class="section">
+    <div class="wrap story">
+      <div>
+        <h2>{copy.storyTitle}</h2>
+        {copy.story.map((p) => <p>{p}</p>)}
+      </div>
+      <blockquote class="quote">
+        <img src="/brand/mark-640.webp" alt="" width="105" height="200" loading="lazy" />
+        <p>{lang === 'ar' ? `«${copy.quote}»` : `“${copy.quote}”`}</p>
+      </blockquote>
+    </div>
+  </section>
+
+  <Section eyebrow={copy.approachEyebrow} title={copy.approachTitle} alt>
+    <ul class="principles">
+      {copy.approach.map((a) => (
+        <li>
+          <h3>{a.title}</h3>
+          <p>{a.body}</p>
+        </li>
+      ))}
+    </ul>
+  </Section>
+
+  <Section title={copy.spaceTitle}>
+    <div class="gallery">
+      <Image src={photoA} alt={copy.altA} widths={[480, 900]} sizes="(max-width: 760px) 100vw, 640px" />
+      <Image src={photoB} alt={copy.altB} widths={[480, 900]} sizes="(max-width: 760px) 100vw, 640px" />
+    </div>
+  </Section>
+
+  <CtaBand />
+</BaseLayout>
+
+<style>
+  .story{
+    display:grid;
+    grid-template-columns:1.4fr 1fr;
+    gap:clamp(28px,6vw,80px);
+    align-items:center;
+  }
+  .story h2{margin-bottom:var(--sp-4)}
+  .story p{font-size:var(--step-1);line-height:1.8}
+
+  .quote{
+    margin:0;
+    display:flex;
+    align-items:center;
+    gap:var(--sp-4);
+    padding:var(--sp-5);
+    border-radius:var(--r-lg);
+    background:var(--surface);
+    border:2px solid var(--amber);
+  }
+  .quote img{inline-size:auto;block-size:150px;flex:none}
+  .quote p{
+    margin:0;
+    font-size:var(--step-2);
+    font-weight:600;
+    color:var(--teal-ink);
+    line-height:1.5;
+  }
+
+  .principles{
+    list-style:none;
+    margin:0;
+    padding:0;
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+    gap:var(--sp-4);
+  }
+  .principles li{
+    margin:0;
+    max-width:none;
+    padding:var(--sp-4);
+    border-radius:var(--r-lg);
+    background:var(--surface);
+    border-top:6px solid var(--teal);
+  }
+  .principles li:nth-child(2n){border-top-color:var(--indigo)}
+  .principles h3{margin-bottom:var(--sp-2)}
+  .principles p{margin:0;color:var(--ink-soft)}
+
+  .gallery{display:grid;grid-template-columns:1fr 1fr;gap:var(--sp-4)}
+  .gallery :global(img){
+    inline-size:100%;
+    aspect-ratio:3 / 2;
+    object-fit:cover;
+    border-radius:var(--r-lg);
+  }
+  .gallery :global(img:first-child){border-start-start-radius:140px}
+  .gallery :global(img:last-child){border-end-end-radius:140px}
+
+  @media (max-width:860px){
+    .story{grid-template-columns:1fr}
+    .gallery{grid-template-columns:1fr}
+  }
+</style>

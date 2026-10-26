@@ -1,0 +1,47 @@
+---
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Icon from '../../../components/Icon.astro';
+import { formatDate, isoDate } from '../../../i18n/dates';
+import type { Lang } from '../../../i18n/ui';
+
+// One page per Markdown file in src/content/news/<lang>/
+export async function getStaticPaths() {
+  const posts = await getCollection('news', (e) => !e.data.draft);
+  return posts.map((post) => {
+    const [lang, ...rest] = post.id.split('/');
+    return { params: { lang, slug: rest.join('/') }, props: { post } };
+  });
+}
+
+const { post } = Astro.props;
+const lang = Astro.params.lang as Lang;
+const { Content } = await render(post);
+const back = { ar: 'العودة إلى الأخبار', en: 'Back to news' }[lang];
+---
+<BaseLayout title={post.data.title} description={post.data.summary}>
+  <article class="section">
+    <div class="wrap wrap--narrow">
+      <time class="date" datetime={isoDate(post.data.date)}>{formatDate(post.data.date, lang)}</time>
+      <h1 class="title">{post.data.title}</h1>
+      {post.data.image && <img class="cover" src={post.data.image} alt="" />}
+      <div class="prose"><Content /></div>
+      <p class="back">
+        <a href={`/${lang}/news/`}><Icon name="arrow" class="back__icon" /> {back}</a>
+      </p>
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  .date{display:block;font-size:var(--step--1);color:var(--amber-ink);font-weight:500;margin-bottom:var(--sp-2)}
+  .title{font-size:var(--step-3);margin-bottom:var(--sp-4)}
+  .cover{border-radius:var(--r-lg);margin-bottom:var(--sp-4)}
+  .prose :global(h2){font-size:var(--step-2);margin:var(--sp-5) 0 var(--sp-2)}
+  .prose :global(h3){margin:var(--sp-4) 0 var(--sp-2)}
+  .prose :global(img){border-radius:var(--r);margin-block:var(--sp-4)}
+  .back{margin-top:var(--sp-6);padding-top:var(--sp-4);border-top:1px solid var(--line)}
+  .back a{display:inline-flex;align-items:center;gap:8px;font-weight:500;text-decoration:none}
+  /* Points backwards: the opposite of the reading direction. */
+  .back :global(.back__icon){inline-size:18px;block-size:18px;rotate:180deg}
+</style>

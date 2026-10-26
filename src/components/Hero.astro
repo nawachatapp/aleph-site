@@ -1,0 +1,172 @@
+---
+// Home hero. The centre's own letter - the alef of the logo - is drawn large,
+// and a photograph from inside the centre shows through its two strokes. On
+// load the photo slides a few pixels aside to reveal the coloured, inscribed
+// letter beneath it, the way the logo's strokes sit over one another.
+import { Image } from 'astro:assets';
+import Icon from './Icon.astro';
+import photo from '../assets/photos/shapes-portrait.jpg';
+import { services } from '../data/services';
+import { whatsapp } from '../i18n/contact';
+import { getLangFromUrl, useTranslations, localisedPath } from '../i18n/utils';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
+const copy = {
+  ar: {
+    titleA: 'خمسةُ اختصاصاتٍ،',
+    titleB: 'وطفلُكم',
+    titleC: 'في المركز.',
+    lead: 'في مركز ألِف التربوي في عربصاليم، تعملُ خمسُ اختصاصيّاتٍ معاً حولَ كلِّ طفل: من التربيةِ التقويميّة والنطقِ إلى العلاجِ الانشغاليّ وعلمِ النفسِ التربويّ والتغذيةِ العلاجيّة.',
+    alt: 'طفلٌ في المركز يمرّرُ إصبعَه على أشكالٍ هندسيّةٍ محفورةٍ في لوحٍ خشبيٍّ ملوّن',
+  },
+  en: {
+    titleA: 'Five specialities.',
+    titleB: 'Your child',
+    titleC: 'at the centre.',
+    lead: 'At Aleph Educational Center in Arabsalim, five specialists work together around each child: remedial education, speech and language, occupational therapy, educational psychology and therapeutic nutrition.',
+    alt: 'A child at the centre tracing geometric shapes cut into a colourful wooden board',
+  },
+}[lang];
+---
+
+<section class="hero">
+  <div class="wrap hero__grid">
+    <div class="hero__text">
+      <p class="eyebrow">{t('site.motto')}</p>
+      <h1 class="hero__title">
+        <span>{copy.titleA}</span>
+        <span>{copy.titleB} <em>{copy.titleC}</em></span>
+      </h1>
+      <p class="lead hero__lead">{copy.lead}</p>
+      <div class="hero__actions">
+        <a class="btn" href={whatsapp} target="_blank" rel="noopener"><Icon name="whatsapp" /> {t('cta.whatsapp')}</a>
+        <a class="btn btn--ghost" href={localisedPath('services', lang)}>{t('cta.services')}</a>
+      </div>
+      <ul class="hero__chips">
+        {services.map((s) => (
+          <li><a href={`${localisedPath('services', lang)}#${s.id}`}>{s.name[lang]}</a></li>
+        ))}
+      </ul>
+    </div>
+
+    <figure class="alef">
+      <img class="alef__ink" src="/brand/mark-640.webp" alt="" width="336" height="640" />
+      <div class="alef__photo">
+        <Image src={photo} alt={copy.alt} widths={[420, 640, 900]} sizes="(max-width: 860px) 70vw, 420px" loading="eager" fetchpriority="high" />
+      </div>
+    </figure>
+  </div>
+</section>
+
+<style>
+  .hero{
+    position:relative;
+    padding-block:clamp(36px,6vw,72px) var(--sp-6);
+    overflow:hidden;
+  }
+  .hero__grid{
+    display:grid;
+    grid-template-columns:minmax(0,1.25fr) minmax(0,.75fr);
+    align-items:center;
+    gap:clamp(24px,5vw,72px);
+  }
+
+  .hero__title{
+    display:flex;
+    flex-direction:column;
+    font-size:var(--step-4);
+    font-weight:600;
+    line-height:1.12;
+    margin-bottom:var(--sp-4);
+  }
+  :root[lang="ar"] .hero__title{line-height:1.35}
+  .hero__title em{
+    font-style:normal;
+    color:var(--teal-ink);
+    /* The hamza's amber, laid under the words like a highlighter stroke. */
+    background:linear-gradient(transparent 62%, var(--amber-pale) 62%, var(--amber-pale) 92%, transparent 92%);
+    -webkit-box-decoration-break:clone;
+    box-decoration-break:clone;
+    padding-inline:.08em;
+  }
+  .hero__lead{margin-bottom:var(--sp-5)}
+
+  .hero__actions{display:flex;flex-wrap:wrap;gap:var(--sp-3);margin-bottom:var(--sp-5)}
+
+  .hero__chips{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    list-style:none;
+    margin:0;
+    padding:0;
+  }
+  .hero__chips li{margin:0}
+  .hero__chips a{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    padding:6px 14px;
+    border-radius:var(--r-pill);
+    background:var(--surface);
+    border:1px solid var(--line);
+    color:var(--ink-soft);
+    font-size:var(--step--1);
+    text-decoration:none;
+    transition:border-color var(--dur) var(--ease),color var(--dur) var(--ease);
+  }
+  .hero__chips a::before{
+    content:"";
+    inline-size:7px;block-size:7px;
+    border-radius:50%;
+    background:var(--teal);
+  }
+  .hero__chips a:hover{border-color:var(--teal);color:var(--indigo)}
+
+  /* ---- The alef ----
+     Two stacked layers at the same size: the inscribed colour mark below,
+     and the photo above it, cut to the letter's strokes by a mask. */
+  .alef{
+    position:relative;
+    margin:0;
+    justify-self:center;
+    block-size:min(72vh,600px);
+    aspect-ratio:465 / 885;
+  }
+  .alef__ink,
+  .alef__photo{
+    position:absolute;
+    inset:0;
+    inline-size:100%;
+    block-size:100%;
+  }
+  .alef__photo{
+    -webkit-mask:url(/brand/mark-body-mask.png) center / 100% 100% no-repeat;
+    mask:url(/brand/mark-body-mask.png) center / 100% 100% no-repeat;
+    transform:translate(-4.5%, -2.6%);
+    animation:alef-reveal 1.1s .25s var(--ease) both;
+  }
+  /* Drawn larger than the letter and dropped down, so the child's face lands
+     in the first stroke and his hands, on the board, in the second. The
+     top of the photo falls behind the hamza, which the mask leaves out. */
+  .alef__photo :global(img){
+    position:absolute;
+    inset-inline:0;
+    top:4%;
+    inline-size:100%;
+    block-size:122%;
+    object-fit:cover;
+    object-position:44% 0;
+  }
+  @keyframes alef-reveal{
+    from{transform:none}
+    to{transform:translate(-4.5%, -2.6%)}
+  }
+
+  @media (max-width:860px){
+    .hero__grid{grid-template-columns:1fr}
+    .alef{block-size:min(64vh,440px);order:-1}
+  }
+</style>

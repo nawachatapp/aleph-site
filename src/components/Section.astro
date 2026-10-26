@@ -1,0 +1,29 @@
+---
+// A page section with an optional eyebrow, heading and lead.
+interface Props {
+  eyebrow?: string;
+  title?: string;
+  lead?: string;
+  alt?: boolean;      // peach-deep background
+  narrow?: boolean;   // constrain to reading width
+  id?: string;
+}
+const { eyebrow, title, lead, alt = false, narrow = false, id } = Astro.props;
+---
+<section class:list={['section', alt && 'section--alt']} id={id}>
+  <div class:list={['wrap', narrow && 'wrap--narrow']}>
+    {(eyebrow || title || lead) && (
+      <div class="section__head">
+        {eyebrow && <p class="eyebrow">{eyebrow}</p>}
+        {title && <h2>{title}</h2>}
+        {lead && <p class="lead">{lead}</p>}
+      </div>
+    )}
+    <slot />
+  </div>
+</section>
+
+<style>
+  .section__head{margin-bottom:var(--sp-5)}
+  .section__head h2{margin-bottom:var(--sp-3)}
+</style>

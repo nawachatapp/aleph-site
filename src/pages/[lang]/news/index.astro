@@ -1,0 +1,65 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import PageHeader from '../../../components/PageHeader.astro';
+import LatestNews from '../../../components/LatestNews.astro';
+import Icon from '../../../components/Icon.astro';
+import { instagram } from '../../../i18n/contact';
+import { langs, type Lang } from '../../../i18n/ui';
+
+export function getStaticPaths() {
+  return langs.map((lang) => ({ params: { lang } }));
+}
+
+const lang = Astro.params.lang as Lang;
+const count = (await getCollection('news', (e) => e.id.startsWith(`${lang}/`) && !e.data.draft)).length;
+
+const copy = {
+  ar: {
+    title: 'الأخبار',
+    description: 'أخبار مركز ألِف التربوي وورش العمل والأنشطة.',
+    eyebrow: 'ما الجديد',
+    heading: 'أخبارُ المركز',
+    lead: 'ورشُ العمل والأنشطةُ والإعلانات.',
+    empty: 'لا أخبارَ منشورةً بعد. تابعوا يوميّاتِ ألِف على إنستغرام في هذه الأثناء.',
+    follow: 'تابعونا على إنستغرام',
+  },
+  en: {
+    title: 'News',
+    description: 'News, workshops and activities from Aleph Educational Center.',
+    eyebrow: 'What’s new',
+    heading: 'News from the centre',
+    lead: 'Workshops, activities and announcements.',
+    empty: 'No news posted yet. Follow Aleph’s daily life on Instagram in the meantime.',
+    follow: 'Follow us on Instagram',
+  },
+}[lang];
+---
+<BaseLayout title={copy.title} description={copy.description}>
+  <PageHeader eyebrow={copy.eyebrow} title={copy.heading} lead={copy.lead} />
+  <section class="section">
+    <div class="wrap">
+      {count > 0 ? (
+        <LatestNews limit={100} />
+      ) : (
+        <div class="empty">
+          <p>{copy.empty}</p>
+          <a class="btn" href={instagram.url} target="_blank" rel="noopener"><Icon name="instagram" /> {copy.follow}</a>
+        </div>
+      )}
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .empty{
+    display:grid;
+    justify-items:start;
+    gap:var(--sp-4);
+    padding:var(--sp-5);
+    border-radius:var(--r-lg);
+    border:2px dashed var(--line);
+    font-size:var(--step-1);
+    color:var(--ink-soft);
+  }
+</style>

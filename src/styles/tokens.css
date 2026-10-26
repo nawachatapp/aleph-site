@@ -1,0 +1,83 @@
+/* ===========================================================================
+   Design tokens - Aleph Educational Center
+   Every colour, typeface and spacing step the site uses is declared here.
+   Components never hardcode a hex value.
+
+   The palette is lifted from the logo: the indigo and teal strokes of the
+   letter alef, the amber hamza above them, and the soft peach ground the
+   centre uses on its own printed cards.
+   =========================================================================== */
+
+:root{
+  /* ---- Brand ---------------------------------------------------------- */
+  --indigo:#2D2A9A;        /* the alef's first stroke */
+  --indigo-deep:#211F78;
+  --indigo-night:#17155A;
+  --teal:#3AA9B4;          /* the second stroke */
+  --teal-light:#7CC6CC;
+  --teal-pale:#D5EEEF;
+  --amber:#FDB633;         /* the hamza */
+  --amber-pale:#FFE6B0;
+
+  /* Text-safe versions: teal and amber fail 4.5:1 on peach as body text,
+     so anything a reader must read uses these darker inks instead. */
+  --teal-ink:#14707A;
+  --amber-ink:#8A5600;
+
+  /* ---- Surfaces ------------------------------------------------------- */
+  --peach:#FDF0E7;         /* page ground, from the centre's cards */
+  --peach-deep:#F9E3D3;    /* alternate sections */
+  --surface:#FFFAF6;       /* cards */
+  --line:#EFD9C9;
+
+  /* ---- Text ----------------------------------------------------------- */
+  --ink:#1E1C4F;           /* an indigo-black, never pure black */
+  --ink-soft:#57557A;
+  --ink-invert:#FFF7F1;
+
+  /* ---- Type ----------------------------------------------------------
+     Readex Pro carries both scripts: its Arabic is the same rounded,
+     geometric hand as the centre's cards, and its HEXP (expansion) axis
+     gives the wide, tracked Latin used for names on those cards.          */
+  --font:'Readex Pro Variable','Segoe UI',Tahoma,system-ui,sans-serif;
+
+  --step--1:clamp(12.5px,.3vw + 11.5px,13.5px);
+  --step-0:clamp(15.5px,.3vw + 14.5px,17px);
+  --step-1:clamp(18px,.6vw + 16px,21px);
+  --step-2:clamp(22px,1.1vw + 18px,28px);
+  --step-3:clamp(27px,2vw + 20px,40px);
+  --step-4:clamp(34px,3.8vw + 20px,64px);
+
+  /* ---- Spacing -------------------------------------------------------- */
+  --sp-1:4px;
+  --sp-2:8px;
+  --sp-3:14px;
+  --sp-4:22px;
+  --sp-5:34px;
+  --sp-6:56px;
+  --sp-7:88px;
+
+  /* ---- Shape ----------------------------------------------------------
+     The logo's strokes are fat and fully rounded, so the site is too:
+     generous radii and pill buttons, never hairline-sharp corners.        */
+  --r-sm:10px;
+  --r:18px;
+  --r-lg:30px;
+  --r-pill:999px;
+
+  /* ---- Layout --------------------------------------------------------- */
+  --measure:64ch;
+  --wrap:1160px;
+  --wrap-narrow:780px;
+  --header-h:84px;
+
+  /* ---- Motion --------------------------------------------------------- */
+  --ease:cubic-bezier(.2,.7,.3,1);
+  --dur:.25s;
+
+  --shadow:0 18px 40px -26px rgba(33,31,120,.45);
+}
+
+@media (max-width:640px){
+  :root{--header-h:70px}
+}

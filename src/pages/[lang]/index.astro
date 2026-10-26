@@ -1,0 +1,246 @@
+---
+import { Image } from 'astro:assets';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Hero from '../../components/Hero.astro';
+import Section from '../../components/Section.astro';
+import ServiceIcon from '../../components/ServiceIcon.astro';
+import Icon from '../../components/Icon.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import LatestNews from '../../components/LatestNews.astro';
+import { getCollection } from 'astro:content';
+import space from '../../assets/photos/two-boys-table.jpg';
+import { services } from '../../data/services';
+import { langs, type Lang } from '../../i18n/ui';
+import { useTranslations, localisedPath } from '../../i18n/utils';
+
+export function getStaticPaths() {
+  return langs.map((lang) => ({ params: { lang } }));
+}
+
+const lang = Astro.params.lang as Lang;
+const t = useTranslations(lang);
+const hasNews = (await getCollection('news', (e) => e.id.startsWith(`${lang}/`) && !e.data.draft)).length > 0;
+
+// DRAFT COPY - written for the centre to review and correct.
+const copy = {
+  ar: {
+    title: 'مركز ألِف التربوي',
+    description: 'مركز ألِف التربوي في عربصاليم: تربية تقويميّة، علاج النطق واللغة، علاج انشغالي، علم النفس التربوي وتغذية علاجيّة.',
+    servicesEyebrow: 'الاختصاصات',
+    servicesTitle: 'خمسُ اختصاصاتٍ تحتَ سقفٍ واحد',
+    servicesLead: 'لكلِّ اختصاصٍ اختصاصيّةٌ تقودُه، وفريقٌ واحدٌ يتشاركُ الملاحظاتِ حولَ كلِّ طفل.',
+    stepsEyebrow: 'كيف نبدأ',
+    stepsTitle: 'من أوّلِ رسالةٍ إلى أوّلِ جلسة',
+    steps: [
+      { title: 'تواصلوا معنا', body: 'رسالةٌ على واتساب أو اتصالٌ هاتفيّ. أخبرونا بما يقلقُكم، ونقترحُ الاختصاصَ المناسب.' },
+      { title: 'جلسةُ تقييم', body: 'تلتقي الاختصاصيّةُ بالطفلِ وبالأهل، وتقيّمُ مهاراتِه ونقاطَ قوّتِه وما يحتاجُ إليه.' },
+      { title: 'خطّةٌ فرديّة', body: 'نضعُ خطّةً مكتوبةً بأهدافٍ واضحة، مصمّمةً لطفلِكم وحدَه.' },
+      { title: 'جلساتٌ ومتابعة', body: 'جلساتٌ منتظمة، ونطلعُكم على التقدّمِ وعلى ما يمكنُ متابعتُه في البيت.' },
+    ],
+    spaceEyebrow: 'المكان',
+    spaceTitle: 'مساحةٌ صُمّمت للأطفال',
+    spaceBody: 'طاولاتٌ وكراسٍ على قياسِهم، وألعابٌ وأدواتٌ تعليميّة مختارة، وزاويةٌ للقراءة. بيئةٌ هادئةٌ وملوّنة يشعرُ فيها الطفلُ بالأمان، فيتعلّمُ وهو يلعب.',
+    spaceAlt: 'طفلان يلعبان لعبةً تعليميّة على طاولةٍ صفراء في المركز',
+    about: 'تعرّفوا إلينا',
+    newsEyebrow: 'الأخبار',
+    newsTitle: 'آخرُ أخبارِ المركز',
+  },
+  en: {
+    title: 'Aleph Educational Center',
+    description: 'Aleph Educational Center in Arabsalim, Lebanon: remedial education, speech and language therapy, occupational therapy, educational psychology and therapeutic nutrition.',
+    servicesEyebrow: 'Specialities',
+    servicesTitle: 'Five specialities under one roof',
+    servicesLead: 'Each speciality is led by its own specialist, and one team shares what it learns about every child.',
+    stepsEyebrow: 'Getting started',
+    stepsTitle: 'From first message to first session',
+    steps: [
+      { title: 'Get in touch', body: 'Send a WhatsApp message or call. Tell us what worries you and we’ll suggest the right speciality.' },
+      { title: 'Assessment', body: 'The specialist meets your child and you, and assesses their skills, strengths and needs.' },
+      { title: 'An individual plan', body: 'We write a plan with clear goals, designed for your child alone.' },
+      { title: 'Sessions and follow-up', body: 'Regular sessions, with updates on progress and ideas you can carry on at home.' },
+    ],
+    spaceEyebrow: 'The space',
+    spaceTitle: 'A space made for children',
+    spaceBody: 'Child-sized tables and chairs, carefully chosen learning games and tools, and a reading corner. A calm, colourful place where children feel safe, so they learn through play.',
+    spaceAlt: 'Two children playing a learning game at a yellow table in the centre',
+    about: 'About us',
+    newsEyebrow: 'News',
+    newsTitle: 'Latest from the centre',
+  },
+}[lang];
+---
+<BaseLayout title={copy.title} description={copy.description}>
+  <Hero />
+
+  <Section eyebrow={copy.servicesEyebrow} title={copy.servicesTitle} lead={copy.servicesLead} alt>
+    <ul class="svc">
+      {services.map((s) => (
+        <li class="svc__card">
+          <ServiceIcon id={s.id} />
+          <h3><a href={`${localisedPath('services', lang)}#${s.id}`}>{s.name[lang]}</a></h3>
+          <p>{s.summary[lang]}</p>
+          <p class="svc__who">
+            <span>{s.specialist.name[lang]}</span>
+            <Icon name="arrow" class="svc__arrow" />
+          </p>
+        </li>
+      ))}
+    </ul>
+  </Section>
+
+  <Section eyebrow={copy.stepsEyebrow} title={copy.stepsTitle}>
+    <ol class="steps">
+      {copy.steps.map((s) => (
+        <li class="steps__item">
+          <h3>{s.title}</h3>
+          <p>{s.body}</p>
+        </li>
+      ))}
+    </ol>
+  </Section>
+
+  <section class="section section--alt">
+    <div class="wrap space">
+      <Image class="space__img" src={space} alt={copy.spaceAlt} widths={[480, 760, 1100]} sizes="(max-width: 860px) 100vw, 600px" />
+      <div class="space__text">
+        <p class="eyebrow">{copy.spaceEyebrow}</p>
+        <h2>{copy.spaceTitle}</h2>
+        <p class="lead">{copy.spaceBody}</p>
+        <a class="btn btn--ghost" href={localisedPath('about', lang)}>{copy.about} <Icon name="arrow" /></a>
+      </div>
+    </div>
+  </section>
+
+  {hasNews && (
+    <Section eyebrow={copy.newsEyebrow} title={copy.newsTitle}>
+      <LatestNews />
+      <p class="more"><a href={localisedPath('news', lang)}>{t('cta.allNews')} <Icon name="arrow" /></a></p>
+    </Section>
+  )}
+
+  <CtaBand />
+</BaseLayout>
+
+<style>
+  /* ---- Service cards ---- */
+  .svc{
+    list-style:none;
+    margin:0;
+    padding:0;
+    display:grid;
+    grid-template-columns:repeat(6,1fr);
+    gap:var(--sp-4);
+  }
+  /* Five cards: three across, then two wider ones beneath. */
+  .svc__card{grid-column:span 2}
+  .svc__card:nth-child(n+4){grid-column:span 3}
+  .svc__card{
+    position:relative;
+    display:flex;
+    flex-direction:column;
+    gap:var(--sp-3);
+    margin:0;
+    max-width:none;
+    padding:var(--sp-4);
+    border-radius:var(--r-lg);
+    background:var(--surface);
+    border:1px solid var(--line);
+    transition:transform var(--dur) var(--ease),box-shadow var(--dur) var(--ease),border-color var(--dur) var(--ease);
+  }
+  .svc__card:hover{transform:translateY(-3px);box-shadow:var(--shadow);border-color:var(--teal-light)}
+  .svc__card h3{font-size:var(--step-2)}
+  .svc__card h3 a{color:inherit;text-decoration:none}
+  .svc__card h3 a::after{content:"";position:absolute;inset:0;border-radius:inherit}
+  .svc__card p{margin:0;color:var(--ink-soft)}
+  .svc__who{
+    margin-top:auto !important;
+    padding-top:var(--sp-3);
+    border-top:1px dashed var(--line);
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    font-size:var(--step--1);
+    font-weight:500;
+    color:var(--teal-ink) !important;
+  }
+  .svc__who :global(.svc__arrow){inline-size:20px;block-size:20px;color:var(--indigo)}
+
+  @media (max-width:960px){
+    .svc{grid-template-columns:repeat(2,1fr)}
+    .svc__card,.svc__card:nth-child(n+4){grid-column:auto}
+    .svc__card:last-child{grid-column:1 / -1}
+  }
+  @media (max-width:600px){
+    .svc{grid-template-columns:1fr}
+  }
+
+  /* ---- Steps: a real sequence, so they are numbered ---- */
+  .steps{
+    list-style:none;
+    margin:0;
+    padding:0;
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:var(--sp-4);
+    counter-reset:step;
+  }
+  .steps__item{
+    position:relative;
+    margin:0;
+    padding-top:64px;
+    counter-increment:step;
+  }
+  .steps__item::before{
+    content:counter(step);
+    position:absolute;
+    top:0;
+    inset-inline-start:0;
+    display:grid;
+    place-items:center;
+    inline-size:46px;
+    block-size:46px;
+    border-radius:14px 14px 14px 4px;
+    background:var(--amber);
+    color:var(--indigo-night);
+    font-weight:600;
+    font-size:20px;
+  }
+  /* A dotted thread joining each step to the next. */
+  .steps__item:not(:last-child)::after{
+    content:"";
+    position:absolute;
+    top:22px;
+    inset-inline:62px 0;
+    border-top:2px dotted var(--teal-light);
+  }
+  .steps__item h3{margin-bottom:var(--sp-2)}
+  .steps__item p{color:var(--ink-soft);margin:0}
+  @media (max-width:860px){
+    .steps{grid-template-columns:1fr 1fr;row-gap:var(--sp-5)}
+    .steps__item::after{display:none}
+  }
+  @media (max-width:520px){.steps{grid-template-columns:1fr}}
+
+  /* ---- The space ---- */
+  .space{
+    display:grid;
+    grid-template-columns:1.1fr 1fr;
+    gap:clamp(28px,5vw,64px);
+    align-items:center;
+  }
+  /* Rounded like the alef's stroke: one great curve, three soft corners. */
+  .space :global(.space__img){
+    inline-size:100%;
+    aspect-ratio:4 / 3;
+    object-fit:cover;
+    border-radius:var(--r-lg);
+    border-start-start-radius:180px;
+  }
+  .space__text h2{margin-bottom:var(--sp-3)}
+  .space__text .lead{margin-bottom:var(--sp-4)}
+  @media (max-width:860px){.space{grid-template-columns:1fr}}
+
+  .more{margin-top:var(--sp-4)}
+  .more a{display:inline-flex;align-items:center;gap:8px;font-weight:500;text-decoration:none}
+  .more :global(svg){inline-size:18px;block-size:18px}
+</style>

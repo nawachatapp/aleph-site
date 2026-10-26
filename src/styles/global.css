@@ -1,0 +1,213 @@
+/* ===========================================================================
+   Global styles. Imported once by BaseLayout.
+   Layout uses CSS logical properties (inline-start / inline-end) rather than
+   left / right, so the same rules serve Arabic RTL and English LTR.
+   =========================================================================== */
+
+@import '@fontsource-variable/readex-pro/full.css';
+@import './tokens.css';
+
+*,*::before,*::after{box-sizing:border-box}
+
+html{
+  -webkit-text-size-adjust:100%;
+  scroll-behavior:smooth;
+  scroll-padding-top:calc(var(--header-h) + 16px);
+  background:var(--peach);
+}
+
+body{
+  margin:0;
+  background:var(--peach);
+  color:var(--ink);
+  font-family:var(--font);
+  font-size:var(--step-0);
+  font-weight:330;
+  line-height:1.75;
+  min-height:100svh;
+  display:flex;
+  flex-direction:column;
+  overflow-x:hidden;
+}
+:root[lang="ar"] body{line-height:1.95}
+
+main{flex:1}
+
+h1,h2,h3,h4{
+  font-weight:600;
+  line-height:1.2;
+  margin:0;
+  text-wrap:balance;
+  color:var(--indigo);
+}
+:root[lang="ar"] :is(h1,h2,h3,h4){line-height:1.5}
+h1{font-size:var(--step-4);letter-spacing:-.01em}
+h2{font-size:var(--step-3)}
+h3{font-size:var(--step-1)}
+
+p{margin:0 0 var(--sp-3);max-width:var(--measure)}
+p:last-child{margin-bottom:0}
+
+a{color:var(--indigo);text-underline-offset:4px;text-decoration-thickness:1.5px;text-decoration-color:var(--teal-light)}
+a:hover{text-decoration-color:currentColor}
+
+:focus-visible{
+  outline:3px solid var(--amber);
+  outline-offset:3px;
+  border-radius:6px;
+}
+
+img{max-width:100%;height:auto;display:block}
+
+ul,ol{margin:0 0 var(--sp-3);padding-inline-start:1.2em}
+li{margin-bottom:var(--sp-2);max-width:var(--measure)}
+li::marker{color:var(--teal)}
+
+/* ---- Shared building blocks ------------------------------------------ */
+
+.wrap{
+  width:100%;
+  max-width:var(--wrap);
+  margin-inline:auto;
+  padding-inline:clamp(16px,4vw,40px);
+}
+.wrap--narrow{max-width:var(--wrap-narrow)}
+
+.section{padding-block:var(--sp-7)}
+.section--alt{background:var(--peach-deep)}
+
+.visually-hidden{
+  position:absolute;
+  width:1px;height:1px;
+  padding:0;margin:-1px;
+  overflow:hidden;
+  clip-path:inset(50%);
+  white-space:nowrap;
+}
+
+.skip-link{
+  position:absolute;
+  inset-inline-start:var(--sp-3);
+  inset-block-start:-100px;
+  z-index:100;
+  padding:10px 18px;
+  background:var(--indigo);
+  color:var(--ink-invert);
+  border-radius:var(--r-pill);
+  text-decoration:none;
+  font-size:var(--step--1);
+  transition:inset-block-start var(--dur) var(--ease);
+}
+.skip-link:focus{inset-block-start:var(--sp-3)}
+
+/* Small label above a heading. In English it takes the wide, tracked
+   capitals of the centre's name cards; Arabic has no capitals, so it is
+   simply set smaller and in teal. */
+.eyebrow{
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  font-size:var(--step--1);
+  font-weight:500;
+  color:var(--teal-ink);
+  margin:0 0 var(--sp-3);
+}
+.eyebrow::before{
+  content:"";
+  inline-size:10px;
+  block-size:10px;
+  border-radius:3px;
+  background:var(--amber);
+  flex:none;
+}
+:root[lang="en"] .eyebrow{
+  font-size:12px;
+  letter-spacing:.2em;
+  text-transform:uppercase;
+  font-variation-settings:'HEXP' 100;
+}
+
+/* Wide tracked Latin, as the specialists' names appear on the centre's cards. */
+.latin-caps{
+  font-size:11.5px;
+  font-weight:500;
+  letter-spacing:.22em;
+  text-transform:uppercase;
+  font-variation-settings:'HEXP' 100;
+  color:var(--teal-ink);
+  direction:ltr;
+  unicode-bidi:isolate;
+}
+
+.lead{
+  font-size:var(--step-1);
+  color:var(--ink-soft);
+  line-height:1.7;
+}
+
+/* ---- Buttons ---------------------------------------------------------- */
+
+.btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  padding:13px 26px;
+  min-block-size:50px;
+  border-radius:var(--r-pill);
+  border:2px solid var(--indigo);
+  background:var(--indigo);
+  color:var(--ink-invert);
+  font:inherit;
+  font-size:var(--step-0);
+  font-weight:500;
+  line-height:1.2;
+  text-decoration:none;
+  cursor:pointer;
+  transition:background var(--dur) var(--ease),
+             border-color var(--dur) var(--ease),
+             color var(--dur) var(--ease),
+             transform var(--dur) var(--ease);
+}
+.btn svg{inline-size:20px;block-size:20px;flex:none}
+.btn:hover{background:var(--indigo-deep);border-color:var(--indigo-deep);transform:translateY(-2px)}
+
+.btn--ghost{
+  background:transparent;
+  color:var(--indigo);
+  border-color:rgba(45,42,154,.25);
+}
+.btn--ghost:hover{background:var(--surface);color:var(--indigo);border-color:var(--indigo)}
+
+/* On indigo grounds the primary button turns amber, like the hamza. */
+.on-dark .btn{background:var(--amber);border-color:var(--amber);color:var(--indigo-night)}
+.on-dark .btn:hover{background:var(--amber-pale);border-color:var(--amber-pale)}
+.on-dark .btn--ghost{background:transparent;color:var(--ink-invert);border-color:rgba(255,247,241,.35)}
+.on-dark .btn--ghost:hover{background:rgba(255,247,241,.1);border-color:var(--ink-invert)}
+
+/* Arrows point "forward" in the reading direction. */
+:root[dir="rtl"] .flip-rtl{transform:scaleX(-1)}
+
+/* ---------------------------------------------------------------------------
+   Page transitions (ClientRouter): a short cross-fade between documents.
+   --------------------------------------------------------------------------- */
+::view-transition-old(root),
+::view-transition-new(root){
+  animation-duration:.22s;
+  animation-timing-function:var(--ease);
+}
+::view-transition-old(root){animation-name:page-out}
+::view-transition-new(root){animation-name:page-in}
+@keyframes page-out{from{opacity:1}to{opacity:0}}
+@keyframes page-in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  ::view-transition-old(root),
+  ::view-transition-new(root){animation:none!important}
+  *,*::before,*::after{
+    animation-duration:.001ms!important;
+    animation-iteration-count:1!important;
+    transition-duration:.001ms!important;
+  }
+}

@@ -1,0 +1,55 @@
+---
+// The three most recent posts in the reader's language. Renders nothing at
+// all when there are none, so the home page never shows an empty block.
+import { getCollection } from 'astro:content';
+import { formatDate, isoDate } from '../i18n/dates';
+import { getLangFromUrl } from '../i18n/utils';
+
+interface Props { limit?: number }
+const { limit = 3 } = Astro.props;
+const lang = getLangFromUrl(Astro.url);
+
+const posts = (await getCollection('news', (e) => e.id.startsWith(`${lang}/`) && !e.data.draft))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .slice(0, limit);
+---
+{posts.length > 0 && (
+  <ul class="news">
+    {posts.map((post) => (
+      <li class="news__item">
+        <time class="news__date" datetime={isoDate(post.data.date)}>{formatDate(post.data.date, lang)}</time>
+        <h3 class="news__title">
+          <a href={`/${lang}/news/${post.id.replace(`${lang}/`, '')}/`}>{post.data.title}</a>
+        </h3>
+        <p class="news__summary">{post.data.summary}</p>
+      </li>
+    ))}
+  </ul>
+)}
+
+<style>
+  .news{
+    list-style:none;
+    margin:0;
+    padding:0;
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(260px,1fr));
+    gap:var(--sp-4);
+  }
+  .news__item{
+    position:relative;
+    margin:0;
+    max-width:none;
+    padding:var(--sp-4);
+    border-radius:var(--r);
+    background:var(--surface);
+    border:1px solid var(--line);
+  }
+  .news__date{display:block;font-size:var(--step--1);color:var(--amber-ink);font-weight:500;margin-bottom:6px}
+  .news__title{font-size:var(--step-1);margin-bottom:var(--sp-2)}
+  .news__title a{text-decoration:none;color:var(--indigo)}
+  /* The whole card is the link target. */
+  .news__title a::after{content:"";position:absolute;inset:0;border-radius:inherit}
+  .news__item:hover{border-color:var(--teal)}
+  .news__summary{color:var(--ink-soft);margin:0}
+</style>

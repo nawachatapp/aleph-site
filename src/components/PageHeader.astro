@@ -1,0 +1,38 @@
+---
+// Title band for inner pages. The alef's two strokes sit faintly behind it,
+// as they do on the centre's printed cards.
+interface Props { eyebrow?: string; title: string; lead?: string }
+const { eyebrow, title, lead } = Astro.props;
+---
+<header class="page-head">
+  <span class="page-head__ghost" aria-hidden="true"></span>
+  <div class="wrap">
+    {eyebrow && <p class="eyebrow">{eyebrow}</p>}
+    <h1>{title}</h1>
+    {lead && <p class="lead page-head__lead">{lead}</p>}
+    <slot />
+  </div>
+</header>
+
+<style>
+  .page-head{
+    position:relative;
+    overflow:hidden;
+    background:var(--peach-deep);
+    padding-block:var(--sp-6);
+  }
+  .page-head .wrap{position:relative}
+  .page-head h1{font-size:var(--step-4);margin-bottom:var(--sp-3)}
+  .page-head__lead{margin:0}
+  .page-head__ghost{
+    position:absolute;
+    inset-block:-12% -30%;
+    inset-inline-end:4%;
+    aspect-ratio:465 / 885;
+    background:var(--amber-pale);
+    opacity:.55;
+    -webkit-mask:url(/brand/mark-body-mask.png) center / contain no-repeat;
+    mask:url(/brand/mark-body-mask.png) center / contain no-repeat;
+    pointer-events:none;
+  }
+</style>
