@@ -2,10 +2,9 @@
 import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 
-// PLACEHOLDER DOMAIN - update `site` once the centre's domain is registered.
-// It drives canonical URLs, the sitemap and the absolute og:image paths.
+// Public domain: drives canonical URLs, the sitemap and social-image URLs.
 export default defineConfig({
-  site: 'https://www.aleph.edu.lb',
+  site: 'https://alephcenter.net',
 
   i18n: {
     locales: ['ar', 'en'],
